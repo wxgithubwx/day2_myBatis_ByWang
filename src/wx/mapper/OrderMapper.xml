@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wx.mapper.OrderMapper">
+    <!--??????? ?????? ????-->
+    <resultMap id="order" type="wx.pojo.Orders">
+        <id property="id" column="id"></id>
+        <result property="userId" column="userId"></result>
+        <result property="number" column="number"></result>
+        <result property="createtime" column="createtime"></result>
+        <association property="user" javaType="wx.pojo.User">
+            <id property="id" column="userId"></id>
+            <result property="username" column="username"></result>
+        </association>
+    </resultMap>
+    <select id="selectOrders" resultMap="order">
+        SELECT
+        orders.id,
+        orders.userId,
+        orders.number,
+        orders.createtime,
+        `user`.id,
+        `user`.username
+        FROM
+        orders
+        left JOIN user ON orders.userId = `user`.id
+    </select>
+    <!--?????-->
+    <resultMap id="user" type="wx.pojo.User">
+        <id property="id" column="uid" ></id>
+        <result property="username" column="username"></result>
+        <result property="sex" column="sex"></result>
+        <collection property="orders" ofType="wx.pojo.Orders">
+            <id property="id" column="oid"></id>
+            <result property="userId" column="uid"></result>
+            <result property="number" column="number"></result>
+        </collection>
+    </resultMap>
+    <!--<select id="selectUser" resultType="wx.pojo.User">-->
+    <select id="selectUser" resultMap="user">
+       SELECT
+        `user`.id uid,`user`.username,`user`.sex,
+        `user`.address,`user`.birthday,
+				orders.userId,orders.id oid,orders.number,orders.createtime
+        FROM
+      `user`
+      left JOIN orders ON  `user`.id=orders.userId
+    </select>
+</mapper>

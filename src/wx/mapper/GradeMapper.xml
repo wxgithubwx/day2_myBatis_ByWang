@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wx.mapper.GradeMapper">
+    <select id="findGrade" resultMap="grade">
+        select c.id,cno,name,grade from clazz c,grade g where c.id=g.id;
+    </select>
+    <resultMap id="grade" type="wx.pojo.Grade">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"></result>
+        <result property="grade" column="grade"></result>
+        <association property="clazz" javaType="wx.pojo.Clazz">
+            <id column="id" property="id"></id>
+            <result column="cno" property="cno"></result>
+        </association>
+    </resultMap>
+</mapper>

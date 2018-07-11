@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wx.mapper.BookMapper">
+    <!--??????????   bean.?????-->
+    <!--??ognl?????????????????????.??????-->
+    <select id="findBookByQueryVo" parameterType="wx.vo.QueryVo"
+            resultType="wx.pojo.Book">
+        select * from book where id=#{book.id}
+    </select>
+
+    <select id="findBookCount" resultType="int">
+        select count(*) from book
+    </select>
+
+    <!--?????resultMap
+    ??????????bean????????????????????
+    -->
+    <resultMap id="bookMap" type="wx.pojo.Book">
+       <!-- <id property="id" column="id"></id>-->
+        <result property="name" column="name"></result>
+    </resultMap>
+
+    <!--??if-->
+    <select id="findBookByNameAndId" parameterType="wx.pojo.Book"
+    resultType="wx.pojo.Book">
+        select * from book where 1=1
+        <if test="id!=0">
+            and id=#{id}
+        </if>
+        <if test="name !=null and name !=''">
+            and name like '%${name}%'
+        </if>
+    </select>
+
+    <select id="findAllBook" resultMap="bookMap" >
+        select * from book
+    </select>
+
+   <!-- ??where-->
+    <select id="findBookByWhere" parameterType="wx.pojo.Book"
+            resultType="wx.pojo.Book">
+        select * from book
+        <where>
+            <if test="id!=0">
+                and id=#{id}
+            </if>
+            <if test="name !=null and name !=''">
+                and name like '%${name}%'
+            </if>
+        </where>
+    </select>
+
+   <!-- ??foreach-->
+    <select id="findBookByForeach" parameterType="wx.vo.QueryVo"
+            resultType="wx.pojo.Book">
+        select * from book
+        <where>
+            <if test="ids!=null and ids.size>0">
+                <foreach collection="ids" item="id" open="and id in("
+                         separator=","
+                         close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="book.name !=null and book.name !=''">
+                and name like '%${book.name}%'
+            </if>
+        </where>
+    </select>
+    <!--??sql??-->
+    <sql id="find_sql">
+        <if test="ids!=null and ids.size>0">
+            <foreach collection="ids" item="id" open="and id in("
+                     separator=","
+                     close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="book.name !=null and book.name !=''">
+            and name like '%${book.name}%'
+        </if>
+    </sql>
+    <select id="findBookBySql" parameterType="wx.vo.QueryVo"
+            resultType="wx.pojo.Book">
+        select * from book
+        <where>
+            <include refid="find_sql"></include>
+        </where>
+    </select>
+
+</mapper>
